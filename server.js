@@ -8,7 +8,7 @@ const app = express();
  */
 const PORT = process.env.PORT || 8080;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-const MAX_PROMPT_CHARS = Number(process.env.MAX_PROMPT_CHARS || 4000);
+const MAX_PROMPT_CHARS = Number(process.env.MAX_PROMPT_CHARS || 5000);
 const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 60_000); // 1 分鐘
 const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 12); // 每 IP 每分鐘最多 12 次
 
@@ -91,13 +91,17 @@ async function listAvailableModels(apiKey) {
 
   if (!r.ok) {
     const msg = data?.error?.message || `List models failed (${r.status})`;
-    throw new Error(msg);
+    const err = new Error(msg);
+    err.status = r.status;
+    err.payload = data;
+    throw err;
   }
 
   return (data.models || [])
-    .filter((m) =>
-      Array.isArray(m.supportedGenerationMethods) &&
-      m.supportedGenerationMethods.includes("generateContent")
+    .filter(
+      (m) =>
+        Array.isArray(m.supportedGenerationMethods) &&
+        m.supportedGenerationMethods.includes("generateContent")
     )
     .map((m) => (m.name || "").replace(/^models\//, ""))
     .filter(Boolean);
@@ -139,9 +143,9 @@ async function generateWithGemini({ apiKey, model, prompt }) {
   const body = {
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: {
-      temperature: 0.9,
+      temperature: 0.75, // 降低跳躍
       topP: 0.9,
-      maxOutputTokens: 900
+      maxOutputTokens: 1200 // 避免過短
     }
   };
 
@@ -160,18 +164,35 @@ async function generateWithGemini({ apiKey, model, prompt }) {
     throw err;
   }
 
+  // 抽取主文字
   const text =
     data?.candidates?.[0]?.content?.parts?.[0]?.text ||
     data?.candidates?.[0]?.output ||
     "";
 
-  if (!text) {
+  if (!text || !String(text).trim()) {
     const err = new Error("Gemini returned empty content.");
     err.status = 502;
+    err.payload = data;
     throw err;
   }
 
-  return { text, raw: data };
+  return { text: String(text).trim(), raw: data };
+}
+
+/**
+ * ===== 輸出品質檢查 =====
+ * 避免太短、太像一句話口號
+ */
+function isWeakReading(text = "") {
+  const t = String(text || "").trim();
+  if (!t) return true;
+  if (t.length < 120) return true;
+
+  const nonEmptyLines = t.split("\n").map((s) => s.trim()).filter(Boolean);
+  if (nonEmptyLines.length < 3) return true;
+
+  return false;
 }
 
 /**
@@ -224,7 +245,7 @@ app.post("/api/interpret", rateLimit, async (req, res) => {
       });
     }
 
-    // 先用預設模型，失敗（如404）再自動挑可用模型重試
+    // 先用預設模型，若失敗（如 404）再自動挑可用模型重試
     let modelUsed = DEFAULT_MODEL;
     let result;
 
@@ -235,7 +256,7 @@ app.post("/api/interpret", rateLimit, async (req, res) => {
         prompt
       });
     } catch (firstErr) {
-      // 429 直接降級，不再重試避免浪費配額
+      // 429 不重試（避免繼續燒配額）
       if (Number(firstErr.status) === 429) throw firstErr;
 
       const fallbackModel = await pickAvailableModel(GEMINI_API_KEY);
@@ -248,6 +269,32 @@ app.post("/api/interpret", rateLimit, async (req, res) => {
       });
     }
 
+    // ===== 輸出品質檢查：太短就同模型重試一次 =====
+    if (isWeakReading(result.text)) {
+      const improvePrompt = `${prompt}
+
+請你依照原本規則「重新完整輸出」，務必：
+- 使用繁體中文
+- 至少 280 字
+- 分成四段：
+  一、核心摘要（2~3句）
+  二、逐張解讀（每張至少2句）
+  三、行動建議（3點條列）
+  四、提醒（1段）
+- 避免一句話帶過、避免空泛口號`;
+
+      const retryResult = await generateWithGemini({
+        apiKey: GEMINI_API_KEY,
+        model: modelUsed,
+        prompt: improvePrompt
+      });
+
+      // 重試後若還弱，就保留原結果（至少有內容）
+      if (!isWeakReading(retryResult.text)) {
+        result = retryResult;
+      }
+    }
+
     return res.status(200).json({
       text: result.text,
       modelUsed,
@@ -256,7 +303,7 @@ app.post("/api/interpret", rateLimit, async (req, res) => {
   } catch (err) {
     const status = Number(err.status) || 500;
 
-    // 配額耗盡或頻率超限：回傳 200 + 備援文字，前端可正常顯示
+    // 配額耗盡或速率限制：回傳 200 + 備援文字，前端可正常顯示
     if (status === 429) {
       return res.status(200).json({
         text: buildFallbackReading(prompt),

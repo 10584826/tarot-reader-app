@@ -12,6 +12,10 @@ const manualPicker = document.getElementById("manualPicker");
 
 let tarotData = [];
 
+// ===== 可調參數 =====
+const MIN_QUESTION_CHARS = 6;
+const MAX_QUESTION_CHARS = 200;
+
 // ===== 初始化 =====
 init();
 
@@ -19,6 +23,7 @@ async function init() {
   try {
     await loadTarotData();
     bindEvents();
+    setIdleMessage();
   } catch (err) {
     aiResult.textContent = `載入失敗：${err.message}`;
   }
@@ -66,6 +71,47 @@ function clearLoading() {
   aiResult.classList.remove("shimmer");
 }
 
+function setIdleMessage() {
+  aiResult.textContent = "先抽牌或手動選牌，AI 會在這裡給你專屬解讀。";
+}
+
+function normalizeQuestion(input) {
+  // 去除過多空白，保留換行語意
+  return String(input || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function validateQuestion(rawQuestion) {
+  const question = normalizeQuestion(rawQuestion);
+
+  if (!question) {
+    return { ok: false, message: "請先輸入你的問題 🙏" };
+  }
+
+  if (question.length < MIN_QUESTION_CHARS) {
+    return {
+      ok: false,
+      message: `問題太短，請至少 ${MIN_QUESTION_CHARS} 個字，讓解讀更精準。`
+    };
+  }
+
+  if (question.length > MAX_QUESTION_CHARS) {
+    return {
+      ok: false,
+      message: `問題太長，請精簡到 ${MAX_QUESTION_CHARS} 字內。`
+    };
+  }
+
+  return { ok: true, question };
+}
+
+function getSpreadLabels(spreadType) {
+  return spreadType === "three" ? ["過去", "現在", "未來"] : ["指引"];
+}
+
 // ===== 隨機抽牌 =====
 function drawRandomCards(n = 1) {
   const pool = [...tarotData];
@@ -88,8 +134,7 @@ function drawRandomCards(n = 1) {
 function renderCards(cards, spreadType) {
   cardsContainer.innerHTML = "";
 
-  const labels =
-    spreadType === "three" ? ["過去", "現在", "未來"] : ["指引"];
+  const labels = getSpreadLabels(spreadType);
 
   cards.forEach((card, i) => {
     const div = document.createElement("article");
@@ -119,34 +164,71 @@ function renderCards(cards, spreadType) {
   });
 }
 
-// ===== Prompt =====
+// ===== 強化 Prompt =====
 function buildPrompt(question, cards, spreadType) {
   const spreadDesc =
     spreadType === "three"
       ? "三牌陣（過去、現在、未來）"
       : "單牌陣（單一指引）";
 
-  const positions = spreadType === "three" ? ["過去", "現在", "未來"] : ["指引"];
+  const positions = getSpreadLabels(spreadType);
 
   const cardLines = cards
     .map((c, i) => {
-      const pos = positions[i] || "牌位";
-      return `- ${pos}：${c.name}（${c.isReversed ? "逆位" : "正位"}）｜牌義：${cardMeaning(c)}`;
+      const pos = positions[i] || `位置${i + 1}`;
+      const ori = c.isReversed ? "逆位" : "正位";
+      const meaning = cardMeaning(c);
+      return `- ${pos}：${c.name}（${ori}）｜關鍵牌義：${meaning}`;
     })
     .join("\n");
 
   return `
-你是一位溫暖且具洞察力的塔羅師，請以繁體中文回答。
-使用者問題：${question}
-牌陣：${spreadDesc}
-抽到的牌：
+你是一位專業、溫暖、務實的塔羅諮詢師。請嚴格遵守以下規則：
+
+【語言與風格規則】
+1. 只能使用「繁體中文」。
+2. 語氣要溫柔、清楚、具體，不要神神叨叨。
+3. 不可使用恐嚇式預言、絕對化語句（例如「一定會」「註定」）。
+4. 不可輸出簡體中文、英文段落、亂碼、半句斷裂句。
+5. 每段都要與「使用者問題」直接相關，禁止空泛心靈雞湯。
+
+【占卜輸入】
+- 使用者問題：${question}
+- 牌陣：${spreadDesc}
+- 牌卡資訊：
 ${cardLines}
 
-請提供：
-1. 先用2-3句總結核心訊息
-2. 逐張牌對應到問題情境解讀
-3. 給出可執行的三點建議
-4. 語氣要溫柔務實，不要恐嚇，不要絕對化預言
+【任務】
+請根據問題與牌卡，提供可落地、可執行的解讀。
+
+【輸出格式（必須完全照此順序）】
+一、核心摘要（2~3句）
+- 給出整體判斷與目前主軸。
+
+二、逐張解讀
+${spreadType === "three"
+  ? "- 過去：至少2句，說明形成原因或背景。\n- 現在：至少2句，說明當下狀態與關鍵課題。\n- 未來：至少2句，說明可能走向與可調整空間。"
+  : "- 指引：至少3句，聚焦當下最重要的行動方向。"}
+- 每一張都要明確連回「使用者問題」。
+
+三、行動建議（請列 3 點）
+- 每點都要具體、可在 7 天內執行。
+- 每點格式必須為：「建議X：……（原因：……）」。
+
+四、提醒與界線（1段）
+- 提醒使用者保有主體性與選擇權。
+- 補一句務實鼓勵，不要空話。
+
+【長度要求】
+- 總字數 320～650 字。
+- 不可少於 320 字。
+
+【自我檢查（先檢查再輸出）】
+- 是否全繁體中文？
+- 是否有完整四段標題？
+- 是否有 3 點具體建議？
+- 是否沒有使用「一定、絕對、註定」等字眼？
+若未符合，請先修正再輸出最終答案。
 `.trim();
 }
 
@@ -160,16 +242,11 @@ async function getAIInterpretation(prompt) {
 
   const data = await res.json().catch(() => ({}));
 
-  // 後端可能回非 200，或回 200 但帶錯誤訊息
   if (!res.ok) {
-    const msg =
-      data?.message ||
-      data?.error ||
-      `API Error (${res.status})`;
+    const msg = data?.message || data?.error || `API Error (${res.status})`;
     throw new Error(msg);
   }
 
-  // 相容你的 server.js：text / modelUsed / degraded
   return {
     text: data?.text || "目前無法取得解讀，請稍後再試。",
     modelUsed: data?.modelUsed || "unknown",
@@ -177,11 +254,21 @@ async function getAIInterpretation(prompt) {
   };
 }
 
+function renderInterpretationResult(result) {
+  let header = "";
+  if (result.degraded) {
+    header = "⚠️ 目前使用備援解讀模式（AI 配額或速率限制）\n\n";
+  } else {
+    header = `✨ 模型：${result.modelUsed}\n\n`;
+  }
+  aiResult.textContent = `${header}${result.text}`;
+}
+
 // ===== 共用執行流程 =====
 async function runReadingWithCards(spreadType, cards) {
-  const question = questionInput.value.trim();
-  if (!question) {
-    alert("請先輸入你的問題 🙏");
+  const v = validateQuestion(questionInput.value);
+  if (!v.ok) {
+    alert(v.message);
     return;
   }
 
@@ -189,17 +276,9 @@ async function runReadingWithCards(spreadType, cards) {
   setLoading("正在解讀中，請稍候...");
 
   try {
-    const prompt = buildPrompt(question, cards, spreadType);
+    const prompt = buildPrompt(v.question, cards, spreadType);
     const result = await getAIInterpretation(prompt);
-
-    let header = "";
-    if (result.degraded) {
-      header = "⚠️ 目前使用備援解讀模式（AI 配額或速率限制）\n\n";
-    } else {
-      header = `✨ 模型：${result.modelUsed}\n\n`;
-    }
-
-    aiResult.textContent = `${header}${result.text}`;
+    renderInterpretationResult(result);
   } catch (e) {
     aiResult.textContent = `發生錯誤：${e.message}`;
   } finally {
@@ -210,9 +289,9 @@ async function runReadingWithCards(spreadType, cards) {
 // ===== 隨機模式入口 =====
 async function runReading(spreadType) {
   try {
-    const question = questionInput.value.trim();
-    if (!question) {
-      alert("請先輸入你的問題 🙏");
+    const v = validateQuestion(questionInput.value);
+    if (!v.ok) {
+      alert(v.message);
       return;
     }
 
@@ -233,8 +312,7 @@ function renderManualPicker(spreadType = "one") {
   if (!manualPicker) return; // 頁面未放該區塊時安全略過
 
   const count = spreadType === "three" ? 3 : 1;
-  const labels = spreadType === "three" ? ["過去", "現在", "未來"] : ["指引"];
-
+  const labels = getSpreadLabels(spreadType);
   const gridClass = count === 3 ? "md:grid-cols-3" : "md:grid-cols-1";
 
   let html = `<div class="grid grid-cols-1 ${gridClass} gap-3">`;
@@ -269,9 +347,9 @@ function renderManualPicker(spreadType = "one") {
   manualPicker.classList.remove("hidden");
 
   document.getElementById("confirmManualBtn")?.addEventListener("click", async () => {
-    const question = questionInput.value.trim();
-    if (!question) {
-      alert("請先輸入你的問題 🙏");
+    const v = validateQuestion(questionInput.value);
+    if (!v.ok) {
+      alert(v.message);
       return;
     }
 

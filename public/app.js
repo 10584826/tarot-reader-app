@@ -63,8 +63,8 @@ function escapeHtml(str = "") {
 }
 
 function setLoading(message = "正在洗牌與解讀中，請稍候...") {
-  aiResult.textContent = message;
   aiResult.classList.add("shimmer");
+  aiResult.textContent = message;
 }
 
 function clearLoading() {
@@ -202,21 +202,9 @@ ${cardLines}
 
 【輸出格式（必須完全照此順序）】
 一、核心摘要（2~3句）
-- 給出整體判斷與目前主軸。
-
 二、逐張解讀
-${spreadType === "three"
-  ? "- 過去：至少2句，說明形成原因或背景。\n- 現在：至少2句，說明當下狀態與關鍵課題。\n- 未來：至少2句，說明可能走向與可調整空間。"
-  : "- 指引：至少3句，聚焦當下最重要的行動方向。"}
-- 每一張都要明確連回「使用者問題」。
-
-三、行動建議（請列 3 點）
-- 每點都要具體、可在 7 天內執行。
-- 每點格式必須為：「建議X：……（原因：……）」。
-
+三、行動建議（3點）
 四、提醒與界線（1段）
-- 提醒使用者保有主體性與選擇權。
-- 補一句務實鼓勵，不要空話。
 
 【長度要求】
 - 總字數 320～650 字。
@@ -253,18 +241,145 @@ async function getAIInterpretation(prompt) {
   };
 }
 
-// ===== AI 結果顯示（可讀性強化）=====
+// ===== 解析 AI 文字為四段 =====
+function cleanText(t = "") {
+  return String(t).replace(/\r/g, "").trim();
+}
+
+function findSectionIndex(text, patterns) {
+  const lower = text.toLowerCase();
+  let found = -1;
+  let bestPos = Number.POSITIVE_INFINITY;
+
+  for (const p of patterns) {
+    const idx = lower.search(p);
+    if (idx >= 0 && idx < bestPos) {
+      bestPos = idx;
+      found = idx;
+    }
+  }
+  return found;
+}
+
+function parseReadingSections(rawText) {
+  const text = cleanText(rawText);
+  if (!text) return null;
+
+  const p1 = [
+    /一[、\.．\s]*核心摘要/i,
+    /核心摘要/i,
+    /summary/i
+  ];
+  const p2 = [
+    /二[、\.．\s]*逐張解讀/i,
+    /逐張解讀/i
+  ];
+  const p3 = [
+    /三[、\.．\s]*行動建議/i,
+    /行動建議/i
+  ];
+  const p4 = [
+    /四[、\.．\s]*提醒與界線/i,
+    /提醒與界線/i,
+    /提醒/i
+  ];
+
+  const i1 = findSectionIndex(text, p1);
+  const i2 = findSectionIndex(text, p2);
+  const i3 = findSectionIndex(text, p3);
+  const i4 = findSectionIndex(text, p4);
+
+  // 至少要抓到兩段以上才做分段卡片，否則走純文字 fallback
+  const foundCount = [i1, i2, i3, i4].filter((x) => x >= 0).length;
+  if (foundCount < 2) return null;
+
+  const markers = [
+    { key: "summary", idx: i1, title: "一、核心摘要" },
+    { key: "detail", idx: i2, title: "二、逐張解讀" },
+    { key: "actions", idx: i3, title: "三、行動建議" },
+    { key: "reminder", idx: i4, title: "四、提醒與界線" }
+  ]
+    .filter((m) => m.idx >= 0)
+    .sort((a, b) => a.idx - b.idx);
+
+  const sections = {};
+  for (let i = 0; i < markers.length; i++) {
+    const cur = markers[i];
+    const next = markers[i + 1];
+    const start = cur.idx;
+    const end = next ? next.idx : text.length;
+    let block = text.slice(start, end).trim();
+
+    // 去掉標題行本身（只留內容）
+    block = block.replace(
+      /^(一|二|三|四)[、\.．\s]*(核心摘要|逐張解讀|行動建議|提醒與界線)\s*/i,
+      ""
+    );
+    block = block.replace(/^(核心摘要|逐張解讀|行動建議|提醒與界線)\s*/i, "").trim();
+
+    sections[cur.key] = {
+      title: cur.title,
+      content: block || "（此段內容較少，建議重新抽牌或補充問題）"
+    };
+  }
+
+  // 補齊缺段
+  if (!sections.summary) sections.summary = { title: "一、核心摘要", content: "（未偵測到此段）" };
+  if (!sections.detail) sections.detail = { title: "二、逐張解讀", content: "（未偵測到此段）" };
+  if (!sections.actions) sections.actions = { title: "三、行動建議", content: "（未偵測到此段）" };
+  if (!sections.reminder) sections.reminder = { title: "四、提醒與界線", content: "（未偵測到此段）" };
+
+  return sections;
+}
+
+function nl2brSafe(text = "") {
+  return escapeHtml(text).replace(/\n/g, "<br>");
+}
+
+function buildSectionCard(title, content, tone = "amber") {
+  const toneMap = {
+    amber: "border-amber-400/30 bg-amber-500/5",
+    cyan: "border-cyan-400/30 bg-cyan-500/5",
+    emerald: "border-emerald-400/30 bg-emerald-500/5",
+    violet: "border-violet-400/30 bg-violet-500/5"
+  };
+  const cls = toneMap[tone] || toneMap.amber;
+
+  return `
+    <section class="rounded-xl border ${cls} p-4">
+      <h4 class="text-base md:text-lg font-bold text-amber-200 mb-2">${escapeHtml(title)}</h4>
+      <div class="text-amber-50/95 leading-8 text-[15px]">${nl2brSafe(content)}</div>
+    </section>
+  `;
+}
+
+// ===== AI 結果顯示：自動四段卡片 =====
 function renderInterpretationResult(result) {
   const header = result.degraded
-    ? "⚠️ 目前使用備援解讀模式（AI 配額或速率限制）\n\n"
-    : `✨ 模型：${result.modelUsed}\n\n`;
+    ? "⚠️ 目前使用備援解讀模式（AI 配額或速率限制）"
+    : `✨ 模型：${result.modelUsed}`;
 
-  const text = `${header}${result.text || ""}`;
+  const sections = parseReadingSections(result.text);
 
-  // 使用 textContent 防 XSS，並保留換行
-  aiResult.textContent = text;
-  aiResult.style.whiteSpace = "pre-wrap";
-  aiResult.style.wordBreak = "break-word";
+  if (!sections) {
+    // fallback：原樣顯示
+    aiResult.textContent = `${header}\n\n${result.text || ""}`;
+    aiResult.style.whiteSpace = "pre-wrap";
+    aiResult.style.wordBreak = "break-word";
+    return;
+  }
+
+  const html = `
+    <div class="space-y-4">
+      <div class="text-sm md:text-base font-semibold text-amber-300">${escapeHtml(header)}</div>
+      ${buildSectionCard(sections.summary.title, sections.summary.content, "amber")}
+      ${buildSectionCard(sections.detail.title, sections.detail.content, "cyan")}
+      ${buildSectionCard(sections.actions.title, sections.actions.content, "emerald")}
+      ${buildSectionCard(sections.reminder.title, sections.reminder.content, "violet")}
+    </div>
+  `;
+
+  aiResult.innerHTML = html;
 }
 
 // ===== 共用執行流程 =====

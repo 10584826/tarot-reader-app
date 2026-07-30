@@ -7,10 +7,7 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
   transition: transform 0.35s ease;
 }
-
-.card:hover {
-  transform: translateY(-4px) scale(1.01);
-}
+.card:hover { transform: translateY(-4px) scale(1.01); }
 
 .tarot-img {
   width: 100%;
@@ -19,47 +16,51 @@
   border-radius: 0.75rem;
   border: 1px solid rgba(251, 191, 36, 0.3);
 }
+.reversed { transform: rotate(180deg); }
 
-.reversed {
-  transform: rotate(180deg);
-}
-
-/* 載入閃爍 */
-.shimmer {
-  animation: shimmer 1.2s infinite linear;
-}
-
+.shimmer { animation: shimmer 1.2s infinite linear; }
 @keyframes shimmer {
   0% { opacity: 0.72; }
   50% { opacity: 1; }
   100% { opacity: 0.72; }
 }
 
-/* ===== AI 結果可讀性強化 ===== */
+/* ===== 關鍵：AI 區塊強制可展開 ===== */
 #aiResult {
-  color: #f8fafc;                 /* 亮一點 */
-  line-height: 1.9;               /* 行距拉開 */
+  color: #f8fafc;
+  line-height: 1.9;
   letter-spacing: 0.01em;
   font-size: 1rem;
-  max-height: 70vh;               /* 避免太長撐爆版面 */
-  overflow-y: auto;               /* 內容多時可捲動 */
+
+  /* 不固定高度，讓內容自然撐開 */
+  height: auto !important;
+  min-height: 180px;
+  max-height: none !important;
+
+  /* 避免被舊樣式裁切 */
+  overflow: visible !important;
+
   padding: 1rem 1.1rem;
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-#aiResult strong,
-#aiResult b {
-  color: #fde68a;
+/* 如果你希望很長內容時才捲動，改成這組（擇一） */
+/*
+#aiResult {
+  min-height: 180px;
+  max-height: 70vh !important;
+  overflow-y: auto !important;
 }
+*/
 
-#aiResult::-webkit-scrollbar {
-  width: 10px;
+#aiResult strong,
+#aiResult b { color: #fde68a; }
+
+/* 四段卡片在 aiResult 內的樣式微調 */
+#aiResult section {
+  margin-top: 0.75rem;
 }
-#aiResult::-webkit-scrollbar-thumb {
-  background: rgba(251, 191, 36, 0.35);
-  border-radius: 999px;
-}
-#aiResult::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.4);
+#aiResult h4 {
+  line-height: 1.5;
 }

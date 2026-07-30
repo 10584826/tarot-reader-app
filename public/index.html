@@ -11,28 +11,61 @@
   <main class="max-w-5xl mx-auto px-4 py-8">
     <header class="text-center mb-8">
       <h1 class="text-3xl md:text-4xl font-bold tracking-widest text-amber-300">🔮 個人化塔羅解讀</h1>
-      <p class="mt-2 text-amber-200/80">輸入你的問題，讓牌卡與 AI 給你洞察</p>
+      <p class="mt-2 text-amber-200/80">輸入你的問題，抽牌或手動選牌，讓 AI 給你洞察</p>
     </header>
 
+    <!-- 問題輸入 + 隨機抽牌 -->
     <section class="bg-slate-900/80 border border-amber-500/30 rounded-2xl p-4 md:p-6 shadow-xl">
-      <label class="block mb-2 text-sm">你的問題：</label>
-      <textarea id="questionInput" rows="3" class="w-full rounded-xl bg-slate-800 border border-amber-500/30 p-3 focus:outline-none focus:ring-2 focus:ring-amber-400" placeholder="例如：我接下來三個月的事業發展如何？"></textarea>
+      <label for="questionInput" class="block mb-2 text-sm">你的問題：</label>
+      <textarea
+        id="questionInput"
+        rows="3"
+        class="w-full rounded-xl bg-slate-800 border border-amber-500/30 p-3 focus:outline-none focus:ring-2 focus:ring-amber-400"
+        placeholder="例如：我接下來三個月的事業發展如何？"
+      ></textarea>
 
       <div class="mt-4 flex gap-3 flex-wrap">
-        <button id="drawOneBtn" class="px-4 py-2 rounded-xl bg-amber-500 text-slate-900 font-semibold hover:bg-amber-400">抽單牌</button>
-        <button id="drawThreeBtn" class="px-4 py-2 rounded-xl bg-fuchsia-500 text-white font-semibold hover:bg-fuchsia-400">抽三牌（過去/現在/未來）</button>
+        <button id="drawOneBtn" class="px-4 py-2 rounded-xl bg-amber-500 text-slate-900 font-semibold hover:bg-amber-400">
+          抽單牌
+        </button>
+        <button id="drawThreeBtn" class="px-4 py-2 rounded-xl bg-fuchsia-500 text-white font-semibold hover:bg-fuchsia-400">
+          抽三牌（過去 / 現在 / 未來）
+        </button>
       </div>
     </section>
 
+    <!-- 手動選牌（配合實體牌） -->
+    <section class="mt-6 bg-slate-900/80 border border-amber-500/30 rounded-2xl p-4 md:p-6 shadow-xl">
+      <h3 class="text-lg font-semibold text-amber-300">🃏 使用實體牌（自選牌）</h3>
+      <p class="text-sm text-amber-100/70 mt-1">可手動選 1 張或 3 張，並設定正位 / 逆位。</p>
+
+      <div class="mt-4 flex gap-3 flex-wrap">
+        <button id="manualOneBtn" class="px-4 py-2 rounded-xl bg-cyan-500 text-slate-900 font-semibold hover:bg-cyan-400">
+          手動單牌
+        </button>
+        <button id="manualThreeBtn" class="px-4 py-2 rounded-xl bg-indigo-500 text-white font-semibold hover:bg-indigo-400">
+          手動三牌（過去 / 現在 / 未來）
+        </button>
+      </div>
+
+      <!-- app.js 會把自選 UI 渲染到這裡 -->
+      <div id="manualPicker" class="mt-4 hidden"></div>
+    </section>
+
+    <!-- 牌面結果 -->
     <section class="mt-8">
       <h2 class="text-xl font-semibold mb-3">牌面結果</h2>
       <div id="cardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
     </section>
 
+    <!-- AI 解讀 -->
     <section class="mt-8">
       <h2 class="text-xl font-semibold mb-3">AI 專屬解讀</h2>
-      <div id="aiResult" class="bg-slate-900/80 border border-amber-500/20 rounded-2xl p-4 min-h-[120px] whitespace-pre-wrap leading-relaxed">
-        先抽牌，AI 會在這裡給你專屬解讀。
+      <div
+        id="aiResult"
+        class="bg-slate-900/80 border border-amber-500/20 rounded-2xl p-4 min-h-[140px] whitespace-pre-wrap leading-relaxed"
+      >
+先抽牌或手動選牌，AI 會在這裡給你專屬解讀。
       </div>
     </section>
   </main>

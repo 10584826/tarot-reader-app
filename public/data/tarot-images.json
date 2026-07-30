@@ -2,21 +2,687 @@
   "cards": [
     {
       "name": "The Fool",
+      "arcana": "Major",
+      "number": 0,
       "image": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
-      "meaning_up": "新的開始、自由、冒險精神",
-      "meaning_rev": "衝動、缺乏計畫、風險評估不足"
+      "meaning_up": "新的開始、冒險、信任生命流程、保持開放心態。",
+      "meaning_rev": "魯莽、分心、欠缺準備、忽略風險。"
     },
     {
       "name": "The Magician",
+      "arcana": "Major",
+      "number": 1,
       "image": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
-      "meaning_up": "行動力、資源整合、顯化能力",
-      "meaning_rev": "操控、分心、資源錯配"
+      "meaning_up": "行動力、資源整合、意志力、把想法落地。",
+      "meaning_rev": "操控、虛張聲勢、能量分散、執行不一致。"
     },
     {
       "name": "The High Priestess",
+      "arcana": "Major",
+      "number": 2,
       "image": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
-      "meaning_up": "直覺、內在智慧、觀察",
-      "meaning_rev": "封閉、直覺受阻、資訊不明"
+      "meaning_up": "直覺、內在智慧、觀察、等待合適時機。",
+      "meaning_rev": "直覺受阻、秘密、資訊不足、過度壓抑。"
+    },
+    {
+      "name": "The Empress",
+      "arcana": "Major",
+      "number": 3,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
+      "meaning_up": "豐盛、滋養、創造力、關係中的照顧與包容。",
+      "meaning_rev": "過度付出、依賴、創造力停滯、界線不清。"
+    },
+    {
+      "name": "The Emperor",
+      "arcana": "Major",
+      "number": 4,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+      "meaning_up": "秩序、規劃、責任、領導力與穩定結構。",
+      "meaning_rev": "控制慾、僵化、權威衝突、缺乏彈性。"
+    },
+    {
+      "name": "The Hierophant",
+      "arcana": "Major",
+      "number": 5,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
+      "meaning_up": "傳統、學習、價值觀、制度支持與指導。",
+      "meaning_rev": "教條、盲從、反叛、價值觀衝突。"
+    },
+    {
+      "name": "The Lovers",
+      "arcana": "Major",
+      "number": 6,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/3a/TheLovers.jpg",
+      "meaning_up": "關係連結、選擇、價值一致、真誠承諾。",
+      "meaning_rev": "不一致、猶豫、關係失衡、誘惑與分心。"
+    },
+    {
+      "name": "The Chariot",
+      "arcana": "Major",
+      "number": 7,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/3b/RWS_Tarot_07_Chariot.jpg",
+      "meaning_up": "意志前進、自律、掌控方向、突破阻礙。",
+      "meaning_rev": "失控、硬撐、方向混亂、衝動前進。"
+    },
+    {
+      "name": "Strength",
+      "arcana": "Major",
+      "number": 8,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
+      "meaning_up": "溫柔的力量、耐心、勇氣、情緒整合。",
+      "meaning_rev": "自我懷疑、情緒壓力、逞強、內耗。"
+    },
+    {
+      "name": "The Hermit",
+      "arcana": "Major",
+      "number": 9,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg",
+      "meaning_up": "內省、尋找答案、沉澱、智慧指引。",
+      "meaning_rev": "孤立、逃避、封閉、過度自我懷疑。"
+    },
+    {
+      "name": "Wheel of Fortune",
+      "arcana": "Major",
+      "number": 10,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
+      "meaning_up": "轉機、循環、時機變化、順勢而為。",
+      "meaning_rev": "停滯、時機不佳、反覆、抗拒改變。"
+    },
+    {
+      "name": "Justice",
+      "arcana": "Major",
+      "number": 11,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg",
+      "meaning_up": "公平、因果、理性判斷、責任與誠實。",
+      "meaning_rev": "偏頗、逃避責任、不公、決策失衡。"
+    },
+    {
+      "name": "The Hanged Man",
+      "arcana": "Major",
+      "number": 12,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg",
+      "meaning_up": "換位思考、暫停、放下執著、新視角。",
+      "meaning_rev": "僵局、拖延、無謂犧牲、抗拒放手。"
+    },
+    {
+      "name": "Death",
+      "arcana": "Major",
+      "number": 13,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg",
+      "meaning_up": "結束與重生、轉化、斷捨離、更新。",
+      "meaning_rev": "抗拒改變、停留過去、轉化延遲。"
+    },
+    {
+      "name": "Temperance",
+      "arcana": "Major",
+      "number": 14,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg",
+      "meaning_up": "平衡、整合、節制、耐心調和。",
+      "meaning_rev": "失衡、過度、急躁、協調困難。"
+    },
+    {
+      "name": "The Devil",
+      "arcana": "Major",
+      "number": 15,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg",
+      "meaning_up": "束縛、慾望、依附、看見陰影模式。",
+      "meaning_rev": "鬆綁、覺察、戒除、重建界線。"
+    },
+    {
+      "name": "The Tower",
+      "arcana": "Major",
+      "number": 16,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
+      "meaning_up": "突變、真相揭露、舊結構崩解、重建。",
+      "meaning_rev": "延後爆發、抗拒變動、內在震盪。"
+    },
+    {
+      "name": "The Star",
+      "arcana": "Major",
+      "number": 17,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg",
+      "meaning_up": "希望、療癒、靈感、願景與信心。",
+      "meaning_rev": "失望、懷疑、能量低落、信念動搖。"
+    },
+    {
+      "name": "The Moon",
+      "arcana": "Major",
+      "number": 18,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg",
+      "meaning_up": "潛意識、直覺、迷霧、情緒波動。",
+      "meaning_rev": "迷霧消散、看清、焦慮緩解、真相浮現。"
+    },
+    {
+      "name": "The Sun",
+      "arcana": "Major",
+      "number": 19,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
+      "meaning_up": "喜悅、成功、清晰、活力與自信。",
+      "meaning_rev": "短暫陰影、延遲、過度樂觀、疲憊。"
+    },
+    {
+      "name": "Judgement",
+      "arcana": "Major",
+      "number": 20,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg",
+      "meaning_up": "覺醒、召喚、總結過去、做出抉擇。",
+      "meaning_rev": "自我否定、逃避評估、遲疑不決。"
+    },
+    {
+      "name": "The World",
+      "arcana": "Major",
+      "number": 21,
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg",
+      "meaning_up": "完成、整合、里程碑、進入新階段。",
+      "meaning_rev": "未完成、延宕、收尾不足、循環未結束。"
+    },
+
+    {
+      "name": "Ace of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Ace",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/11/Wands01.jpg",
+      "meaning_up": "新點子、創意火花、行動起點、熱情。",
+      "meaning_rev": "動能不足、拖延、方向不明、三分鐘熱度。"
+    },
+    {
+      "name": "Two of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Two",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Wands02.jpg",
+      "meaning_up": "規劃未來、擴張視野、策略選擇。",
+      "meaning_rev": "猶豫不決、計畫保守、害怕踏出舒適圈。"
+    },
+    {
+      "name": "Three of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Three",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Wands03.jpg",
+      "meaning_up": "進展、等待成果、遠見、合作拓展。",
+      "meaning_rev": "進度延遲、視野受限、準備不足。"
+    },
+    {
+      "name": "Four of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Four",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Wands04.jpg",
+      "meaning_up": "慶祝、穩定、家庭感、短期成果。",
+      "meaning_rev": "不穩定、關係摩擦、喜悅感下降。"
+    },
+    {
+      "name": "Five of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Five",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Wands05.jpg",
+      "meaning_up": "競爭、磨合、意見衝突、激發成長。",
+      "meaning_rev": "內耗、避免衝突、混亂無效。"
+    },
+    {
+      "name": "Six of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Six",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Wands06.jpg",
+      "meaning_up": "勝利、肯定、曝光、獲得支持。",
+      "meaning_rev": "過度在意評價、驕傲、短暫成功。"
+    },
+    {
+      "name": "Seven of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Seven",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Wands07.jpg",
+      "meaning_up": "捍衛立場、堅持、守住成果。",
+      "meaning_rev": "防禦過度、壓力大、立場動搖。"
+    },
+    {
+      "name": "Eight of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Eight",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Wands08.jpg",
+      "meaning_up": "快速進展、訊息往來、節奏加快。",
+      "meaning_rev": "延誤、溝通卡住、節奏失控。"
+    },
+    {
+      "name": "Nine of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Nine",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Wands09.jpg",
+      "meaning_up": "韌性、防守、最後關卡、警覺。",
+      "meaning_rev": "過度戒備、疲乏、難以信任。"
+    },
+    {
+      "name": "Ten of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Ten",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Wands10.jpg",
+      "meaning_up": "負擔沉重、責任壓力、需要分工。",
+      "meaning_rev": "釋放壓力、放下包袱、重新分配。"
+    },
+    {
+      "name": "Page of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Page",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Wands11.jpg",
+      "meaning_up": "好奇、探索、靈感訊息、新計畫萌芽。",
+      "meaning_rev": "空想、躁進、缺乏持續力。"
+    },
+    {
+      "name": "Knight of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Knight",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/16/Wands12.jpg",
+      "meaning_up": "衝勁、冒險、快速行動、熱情推進。",
+      "meaning_rev": "魯莽、反覆、三分鐘熱度。"
+    },
+    {
+      "name": "Queen of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "Queen",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Wands13.jpg",
+      "meaning_up": "自信魅力、獨立、影響力、熱情領導。",
+      "meaning_rev": "嫉妒、情緒化、控制欲、能量耗散。"
+    },
+    {
+      "name": "King of Wands",
+      "arcana": "Minor",
+      "suit": "Wands",
+      "rank": "King",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Wands14.jpg",
+      "meaning_up": "遠見領導、決斷、創業精神、整合資源。",
+      "meaning_rev": "專斷、急躁、承諾落空。"
+    },
+
+    {
+      "name": "Ace of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Ace",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/36/Cups01.jpg",
+      "meaning_up": "情感新開始、同理、愛與連結流動。",
+      "meaning_rev": "情緒封閉、空虛、壓抑感受。"
+    },
+    {
+      "name": "Two of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Two",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Cups02.jpg",
+      "meaning_up": "互相吸引、合作默契、關係平衡。",
+      "meaning_rev": "誤解、不對等、關係疏離。"
+    },
+    {
+      "name": "Three of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Three",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Cups03.jpg",
+      "meaning_up": "慶祝、友誼支持、社交喜悅。",
+      "meaning_rev": "社交過度、小圈衝突、表面和諧。"
+    },
+    {
+      "name": "Four of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Four",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/35/Cups04.jpg",
+      "meaning_up": "冷淡、反思、重新檢視需求。",
+      "meaning_rev": "打開心房、看見機會、願意接收。"
+    },
+    {
+      "name": "Five of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Five",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Cups05.jpg",
+      "meaning_up": "失落、遺憾、情緒低潮、哀悼。",
+      "meaning_rev": "走出悲傷、接受、看見剩餘資源。"
+    },
+    {
+      "name": "Six of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Six",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/17/Cups06.jpg",
+      "meaning_up": "回憶、純真、舊人舊事、溫暖互助。",
+      "meaning_rev": "活在過去、幼稚模式、難以長大。"
+    },
+    {
+      "name": "Seven of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Seven",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Cups07.jpg",
+      "meaning_up": "選項多、想像力、誘惑、需辨真偽。",
+      "meaning_rev": "聚焦、做選擇、看清現實。"
+    },
+    {
+      "name": "Eight of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Eight",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/60/Cups08.jpg",
+      "meaning_up": "轉身離開、尋找更深意義、放下。",
+      "meaning_rev": "拖延離場、害怕改變、回頭糾結。"
+    },
+    {
+      "name": "Nine of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Nine",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/24/Cups09.jpg",
+      "meaning_up": "滿足、願望成真、享受成果。",
+      "meaning_rev": "表面滿足、空虛、過度享樂。"
+    },
+    {
+      "name": "Ten of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Ten",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/84/Cups10.jpg",
+      "meaning_up": "情感圓滿、家庭和諧、長期幸福。",
+      "meaning_rev": "理想落差、關係壓力、情感不穩。"
+    },
+    {
+      "name": "Page of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Page",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Cups11.jpg",
+      "meaning_up": "情感訊息、創意靈感、柔軟表達。",
+      "meaning_rev": "情緒不成熟、逃避、過度幻想。"
+    },
+    {
+      "name": "Knight of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Knight",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Cups12.jpg",
+      "meaning_up": "浪漫邀請、理想追求、溫柔行動。",
+      "meaning_rev": "不切實際、情緒起伏、承諾不穩。"
+    },
+    {
+      "name": "Queen of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "Queen",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/62/Cups13.jpg",
+      "meaning_up": "同理、療癒、情感智慧、直覺敏銳。",
+      "meaning_rev": "情緒淹沒、過度共感、界線鬆動。"
+    },
+    {
+      "name": "King of Cups",
+      "arcana": "Minor",
+      "suit": "Cups",
+      "rank": "King",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/04/Cups14.jpg",
+      "meaning_up": "情緒穩定、成熟包容、理性與感性平衡。",
+      "meaning_rev": "情緒壓抑、冷漠、操控感。"
+    },
+
+    {
+      "name": "Ace of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Ace",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Swords01.jpg",
+      "meaning_up": "清晰、真相、突破、果斷判斷。",
+      "meaning_rev": "思緒混亂、溝通失焦、判斷偏差。"
+    },
+    {
+      "name": "Two of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Two",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Swords02.jpg",
+      "meaning_up": "僵持、兩難、需要冷靜評估。",
+      "meaning_rev": "迴避終止、真相浮現、被迫抉擇。"
+    },
+    {
+      "name": "Three of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Three",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/0/02/Swords03.jpg",
+      "meaning_up": "心痛、失望、關係或期待受傷。",
+      "meaning_rev": "修復、釋懷、疼痛漸退。"
+    },
+    {
+      "name": "Four of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Four",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Swords04.jpg",
+      "meaning_up": "休息、恢復、暫停戰線、沉澱。",
+      "meaning_rev": "疲勞累積、休息不足、重返壓力。"
+    },
+    {
+      "name": "Five of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Five",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/23/Swords05.jpg",
+      "meaning_up": "衝突、爭輸贏、代價高昂的勝利。",
+      "meaning_rev": "和解、放下對抗、重建溝通。"
+    },
+    {
+      "name": "Six of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Six",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/29/Swords06.jpg",
+      "meaning_up": "過渡、離開困境、理性前行。",
+      "meaning_rev": "停在半途、舊問題未解、返工。"
+    },
+    {
+      "name": "Seven of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Seven",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/34/Swords07.jpg",
+      "meaning_up": "策略、低調、迂迴、資訊不透明。",
+      "meaning_rev": "真相曝光、坦白、良心壓力。"
+    },
+    {
+      "name": "Eight of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Eight",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Swords08.jpg",
+      "meaning_up": "受限感、焦慮、自我設限。",
+      "meaning_rev": "鬆綁、看見出口、重建自主。"
+    },
+    {
+      "name": "Nine of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Nine",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Swords09.jpg",
+      "meaning_up": "焦慮、失眠、擔憂放大、內耗。",
+      "meaning_rev": "壓力釋放、尋求支持、走出黑夜。"
+    },
+    {
+      "name": "Ten of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Ten",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Swords10.jpg",
+      "meaning_up": "結束、到底、痛後重生。",
+      "meaning_rev": "恢復、重建、不再重蹈覆轍。"
+    },
+    {
+      "name": "Page of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Page",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Swords11.jpg",
+      "meaning_up": "好奇求知、觀察、訊息敏銳。",
+      "meaning_rev": "多疑、防衛、言語衝動。"
+    },
+    {
+      "name": "Knight of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Knight",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Swords12.jpg",
+      "meaning_up": "快速決斷、直攻目標、行動果敢。",
+      "meaning_rev": "衝動武斷、口舌爭鋒、忽略細節。"
+    },
+    {
+      "name": "Queen of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "Queen",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Swords13.jpg",
+      "meaning_up": "理性清明、界線、獨立判斷。",
+      "meaning_rev": "過度挑剔、冷硬、防禦過強。"
+    },
+    {
+      "name": "King of Swords",
+      "arcana": "Minor",
+      "suit": "Swords",
+      "rank": "King",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/33/Swords14.jpg",
+      "meaning_up": "權威判斷、原則、公正、策略思維。",
+      "meaning_rev": "專斷、苛刻、情感隔離。"
+    },
+
+    {
+      "name": "Ace of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Ace",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Pents01.jpg",
+      "meaning_up": "新機會、務實起步、資源到位、財務種子。",
+      "meaning_rev": "機會流失、計畫落空、資源不足。"
+    },
+    {
+      "name": "Two of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Two",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Pents02.jpg",
+      "meaning_up": "平衡多工、彈性調度、時間管理。",
+      "meaning_rev": "失衡、忙亂、優先順序混亂。"
+    },
+    {
+      "name": "Three of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Three",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/42/Pents03.jpg",
+      "meaning_up": "協作、專業、技術成長、共同打造。",
+      "meaning_rev": "協作不良、品質不穩、分工失衡。"
+    },
+    {
+      "name": "Four of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Four",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/3/35/Pents04.jpg",
+      "meaning_up": "守成、穩定、重視安全與控制。",
+      "meaning_rev": "過度保守、抓太緊、資源停滯。"
+    },
+    {
+      "name": "Five of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Five",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/96/Pents05.jpg",
+      "meaning_up": "匱乏感、壓力、需要求助與支持。",
+      "meaning_rev": "情勢回溫、援助出現、逐步復原。"
+    },
+    {
+      "name": "Six of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Six",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Pents06.jpg",
+      "meaning_up": "給予與接收、資源流動、互惠。",
+      "meaning_rev": "不對等交換、依賴、隱性控制。"
+    },
+    {
+      "name": "Seven of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Seven",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Pents07.jpg",
+      "meaning_up": "耐心耕耘、評估成果、長期投資。",
+      "meaning_rev": "急於收成、停滯不前、回報不如預期。"
+    },
+    {
+      "name": "Eight of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Eight",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/49/Pents08.jpg",
+      "meaning_up": "精進技能、專注、打磨品質、勤奮。",
+      "meaning_rev": "完美主義、倦怠、機械重複。"
+    },
+    {
+      "name": "Nine of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Nine",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Pents09.jpg",
+      "meaning_up": "獨立、成果、品味生活、穩健自足。",
+      "meaning_rev": "孤立、過度消費、成就感不足。"
+    },
+    {
+      "name": "Ten of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Ten",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/42/Pents10.jpg",
+      "meaning_up": "長期穩定、家族資源、傳承、財務安全。",
+      "meaning_rev": "家庭/財務摩擦、基礎不穩、短視近利。"
+    },
+    {
+      "name": "Page of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Page",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Pents11.jpg",
+      "meaning_up": "學習投資、踏實起步、務實計畫。",
+      "meaning_rev": "拖延、分心、學習中斷、執行力不足。"
+    },
+    {
+      "name": "Knight of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Knight",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Pents12.jpg",
+      "meaning_up": "穩定執行、可靠、耐心推進、重視細節。",
+      "meaning_rev": "僵化、效率低、過度保守。"
+    },
+    {
+      "name": "Queen of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "Queen",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/88/Pents13.jpg",
+      "meaning_up": "務實照顧、資源管理、溫暖且能落地。",
+      "meaning_rev": "過度操心、物質焦慮、忽略自我照顧。"
+    },
+    {
+      "name": "King of Pentacles",
+      "arcana": "Minor",
+      "suit": "Pentacles",
+      "rank": "King",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Pents14.jpg",
+      "meaning_up": "穩健成功、長期規劃、財務成熟、可靠領導。",
+      "meaning_rev": "固執、物質至上、控制資源、風險保守。"
     }
   ]
 }

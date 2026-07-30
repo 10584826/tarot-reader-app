@@ -28,7 +28,6 @@ function normalizeModelName(name = "") {
     "gemini 3.5 flash": "gemini-3.5-flash",
     "gemini 3.1 flash lite": "gemini-3.1-flash-lite",
     "gemini 3 flash": "gemini-3-flash",
-    "gemini 2.5 flash lite": "gemini-2.5-flash-lite",
 
     // 兼容舊名
     "gemini 2.0 flash": "gemini-2.0-flash",
@@ -43,7 +42,7 @@ function normalizeModelName(name = "") {
 }
 
 const DEFAULT_MODEL = normalizeModelName(
-  process.env.GEMINI_MODEL || "gemini-2.5-flash-lite"
+  process.env.GEMINI_MODEL || "gemini-3.6-flash"
 );
 
 /**
@@ -107,15 +106,14 @@ async function listAvailableModels(apiKey) {
 async function pickAvailableModel(apiKey) {
   const supported = await listAvailableModels(apiKey);
 
-  // 你提供的可用模型優先順序（先用環境變數，再依序 fallback）
+  // 已移除 gemini-2.5-flash-lite
   const preferredRaw = [
-    process.env.GEMINI_MODEL || "gemini-2.5-flash-lite",
+    process.env.GEMINI_MODEL || "gemini-3.6-flash",
     "gemini-3.6-flash",
     "gemini-3.5-flash-lite",
     "gemini-3.5-flash",
     "gemini-3.1-flash-lite",
     "gemini-3-flash",
-    "gemini-2.5-flash-lite",
     // 額外保底
     "gemini-2.0-flash",
     "gemini-2.0-flash-lite",

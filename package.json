@@ -2,8 +2,14 @@
   "name": "tarot-reader-app",
   "version": "1.0.0",
   "private": true,
-  "description": "Zero-cost Tarot Reading SPA with Gemini API via Azure SWA Functions",
+  "main": "server.js",
   "scripts": {
-    "start": "npx serve ."
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
   }
 }

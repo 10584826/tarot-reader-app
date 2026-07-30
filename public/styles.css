@@ -1,29 +1,65 @@
+/* 卡片基礎樣式 */
 .card {
-  background: linear-gradient(145deg, rgba(15,23,42,.95), rgba(30,41,59,.95));
-  border: 1px solid rgba(251,191,36,.25);
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+  border: 1px solid rgba(251, 191, 36, 0.25);
   border-radius: 1rem;
   padding: 1rem;
-  box-shadow: 0 8px 30px rgba(0,0,0,.35);
-  transition: transform .35s ease;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  transition: transform 0.35s ease;
 }
+
 .card:hover {
   transform: translateY(-4px) scale(1.01);
 }
+
 .tarot-img {
   width: 100%;
   height: 260px;
   object-fit: cover;
-  border-radius: .75rem;
-  border: 1px solid rgba(251,191,36,.3);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(251, 191, 36, 0.3);
 }
+
 .reversed {
   transform: rotate(180deg);
 }
+
+/* 載入閃爍 */
 .shimmer {
   animation: shimmer 1.2s infinite linear;
 }
+
 @keyframes shimmer {
-  0% { opacity: .7; }
+  0% { opacity: 0.72; }
   50% { opacity: 1; }
-  100% { opacity: .7; }
+  100% { opacity: 0.72; }
+}
+
+/* ===== AI 結果可讀性強化 ===== */
+#aiResult {
+  color: #f8fafc;                 /* 亮一點 */
+  line-height: 1.9;               /* 行距拉開 */
+  letter-spacing: 0.01em;
+  font-size: 1rem;
+  max-height: 70vh;               /* 避免太長撐爆版面 */
+  overflow-y: auto;               /* 內容多時可捲動 */
+  padding: 1rem 1.1rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#aiResult strong,
+#aiResult b {
+  color: #fde68a;
+}
+
+#aiResult::-webkit-scrollbar {
+  width: 10px;
+}
+#aiResult::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.35);
+  border-radius: 999px;
+}
+#aiResult::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.4);
 }

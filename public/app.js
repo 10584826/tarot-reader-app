@@ -76,7 +76,6 @@ function setIdleMessage() {
 }
 
 function normalizeQuestion(input) {
-  // 去除過多空白，保留換行語意
   return String(input || "")
     .replace(/\r\n/g, "\n")
     .replace(/[ \t]+/g, " ")
@@ -254,14 +253,18 @@ async function getAIInterpretation(prompt) {
   };
 }
 
+// ===== AI 結果顯示（可讀性強化）=====
 function renderInterpretationResult(result) {
-  let header = "";
-  if (result.degraded) {
-    header = "⚠️ 目前使用備援解讀模式（AI 配額或速率限制）\n\n";
-  } else {
-    header = `✨ 模型：${result.modelUsed}\n\n`;
-  }
-  aiResult.textContent = `${header}${result.text}`;
+  const header = result.degraded
+    ? "⚠️ 目前使用備援解讀模式（AI 配額或速率限制）\n\n"
+    : `✨ 模型：${result.modelUsed}\n\n`;
+
+  const text = `${header}${result.text || ""}`;
+
+  // 使用 textContent 防 XSS，並保留換行
+  aiResult.textContent = text;
+  aiResult.style.whiteSpace = "pre-wrap";
+  aiResult.style.wordBreak = "break-word";
 }
 
 // ===== 共用執行流程 =====
@@ -309,7 +312,7 @@ async function runReading(spreadType) {
 
 // ===== 手動選牌 UI =====
 function renderManualPicker(spreadType = "one") {
-  if (!manualPicker) return; // 頁面未放該區塊時安全略過
+  if (!manualPicker) return;
 
   const count = spreadType === "three" ? 3 : 1;
   const labels = getSpreadLabels(spreadType);
@@ -368,7 +371,6 @@ function renderManualPicker(spreadType = "one") {
         return;
       }
 
-      // 三牌時避免重複
       if (count === 3) {
         if (used.has(cardIdx)) {
           alert("手動三牌不可重複，請重新選擇");

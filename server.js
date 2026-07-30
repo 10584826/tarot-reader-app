@@ -8,9 +8,6 @@ const app = express();
  */
 const PORT = process.env.PORT || 8080;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-const DEFAULT_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
-
-// 你可用環境變數覆蓋這些值（避免被濫用）
 const MAX_PROMPT_CHARS = Number(process.env.MAX_PROMPT_CHARS || 4000);
 const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 60_000); // 1 分鐘
 const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX || 12); // 每 IP 每分鐘最多 12 次
@@ -19,12 +16,42 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 /**
- * ===== 簡易記憶體 Rate Limit（免費版夠用） =====
+ * ===== 模型名稱正規化 =====
+ * 把 UI 顯示名轉成 API 常用 ID 格式，避免 404 model not found
+ */
+function normalizeModelName(name = "") {
+  const n = String(name).trim().toLowerCase();
+
+  const map = {
+    "gemini 3.6 flash": "gemini-3.6-flash",
+    "gemini 3.5 flash lite": "gemini-3.5-flash-lite",
+    "gemini 3.5 flash": "gemini-3.5-flash",
+    "gemini 3.1 flash lite": "gemini-3.1-flash-lite",
+    "gemini 3 flash": "gemini-3-flash",
+    "gemini 2.5 flash lite": "gemini-2.5-flash-lite",
+
+    // 兼容舊名
+    "gemini 2.0 flash": "gemini-2.0-flash",
+    "gemini 2.0 flash lite": "gemini-2.0-flash-lite",
+    "gemini 1.5 flash": "gemini-1.5-flash"
+  };
+
+  if (map[n]) return map[n];
+
+  // 若已是 gemini-xxx 格式，直接回傳；否則把空白轉連字號
+  return n.includes("gemini-") ? n : n.replace(/\s+/g, "-");
+}
+
+const DEFAULT_MODEL = normalizeModelName(
+  process.env.GEMINI_MODEL || "gemini-2.5-flash-lite"
+);
+
+/**
+ * ===== 基本安全：簡易記憶體 Rate Limit =====
  */
 const ipBuckets = new Map();
 
 function getClientIp(req) {
-  // App Service / proxy 情境下常見 header
   const xff = req.headers["x-forwarded-for"];
   if (typeof xff === "string" && xff.length > 0) {
     return xff.split(",")[0].trim();
@@ -56,21 +83,23 @@ function rateLimit(req, res, next) {
 }
 
 /**
- * ===== Gemini 工具函式 =====
+ * ===== 可用模型查詢 =====
  */
 async function listAvailableModels(apiKey) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
   const r = await fetch(url);
-
   const data = await r.json().catch(() => ({}));
+
   if (!r.ok) {
     const msg = data?.error?.message || `List models failed (${r.status})`;
     throw new Error(msg);
   }
 
   return (data.models || [])
-    .filter((m) => Array.isArray(m.supportedGenerationMethods) &&
-      m.supportedGenerationMethods.includes("generateContent"))
+    .filter((m) =>
+      Array.isArray(m.supportedGenerationMethods) &&
+      m.supportedGenerationMethods.includes("generateContent")
+    )
     .map((m) => (m.name || "").replace(/^models\//, ""))
     .filter(Boolean);
 }
@@ -78,24 +107,34 @@ async function listAvailableModels(apiKey) {
 async function pickAvailableModel(apiKey) {
   const supported = await listAvailableModels(apiKey);
 
-  // 依偏好排序，挑第一個可用
-  const preferred = [
-    DEFAULT_MODEL,
+  // 你提供的可用模型優先順序（先用環境變數，再依序 fallback）
+  const preferredRaw = [
+    process.env.GEMINI_MODEL || "gemini-2.5-flash-lite",
+    "gemini-3.6-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite",
+    "gemini-3-flash",
+    "gemini-2.5-flash-lite",
+    // 額外保底
     "gemini-2.0-flash",
     "gemini-2.0-flash-lite",
     "gemini-1.5-flash"
   ];
 
-  for (const name of preferred) {
-    if (supported.includes(name)) return name;
+  const preferred = [...new Set(preferredRaw.map(normalizeModelName))];
+
+  for (const model of preferred) {
+    if (supported.includes(model)) return model;
   }
 
-  // 若偏好都沒有，就退回第一個可 generateContent 的模型
   if (supported.length > 0) return supported[0];
-
   throw new Error("No available Gemini model supports generateContent.");
 }
 
+/**
+ * ===== 生成請求 =====
+ */
 async function generateWithGemini({ apiKey, model, prompt }) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -115,9 +154,9 @@ async function generateWithGemini({ apiKey, model, prompt }) {
   });
 
   const data = await r.json().catch(() => ({}));
+
   if (!r.ok) {
-    const errMsg = data?.error?.message || `Gemini API error (${r.status})`;
-    const err = new Error(errMsg);
+    const err = new Error(data?.error?.message || `Gemini API error (${r.status})`);
     err.status = r.status;
     err.payload = data;
     throw err;
@@ -129,16 +168,42 @@ async function generateWithGemini({ apiKey, model, prompt }) {
     "";
 
   if (!text) {
-    throw new Error("Gemini returned empty content.");
+    const err = new Error("Gemini returned empty content.");
+    err.status = 502;
+    throw err;
   }
 
   return { text, raw: data };
 }
 
 /**
- * ===== API =====
+ * ===== 429/配額耗盡備援文字 =====
+ */
+function buildFallbackReading(prompt = "") {
+  const trimmed = String(prompt).trim().slice(0, 320);
+
+  return [
+    "目前 AI 服務額度已滿或暫時繁忙，我先提供一段備援指引：",
+    "",
+    "你此刻最需要的不是一次到位的答案，而是先釐清「最重要的一個問題核心」。",
+    "請把焦點放在你現在能主動影響的行動上，而非不可控的外在結果。",
+    "",
+    "建議你現在做三件事：",
+    "1. 寫下你最在意的目標，以及本週可完成的一個最小步驟。",
+    "2. 列出兩個可行選項，分別評估風險與收益。",
+    "3. 設定 3~7 天後的回顧時間，檢查進展再調整。",
+    "",
+    "（系統摘要）",
+    trimmed || "未收到有效問題內容。"
+  ].join("\n");
+}
+
+/**
+ * ===== API：塔羅 AI 解讀 =====
  */
 app.post("/api/interpret", rateLimit, async (req, res) => {
+  const prompt = String(req.body?.prompt || "").trim();
+
   try {
     if (!GEMINI_API_KEY) {
       return res.status(500).json({
@@ -147,7 +212,6 @@ app.post("/api/interpret", rateLimit, async (req, res) => {
       });
     }
 
-    const prompt = String(req.body?.prompt || "").trim();
     if (!prompt) {
       return res.status(400).json({
         error: "Missing prompt",
@@ -162,8 +226,7 @@ app.post("/api/interpret", rateLimit, async (req, res) => {
       });
     }
 
-    // 1) 優先使用指定模型（環境變數）
-    // 2) 失敗時自動探測可用模型重試一次
+    // 先用預設模型，失敗（如404）再自動挑可用模型重試
     let modelUsed = DEFAULT_MODEL;
     let result;
 
@@ -174,9 +237,12 @@ app.post("/api/interpret", rateLimit, async (req, res) => {
         prompt
       });
     } catch (firstErr) {
-      // 常見 404 / model not found -> fallback
+      // 429 直接降級，不再重試避免浪費配額
+      if (Number(firstErr.status) === 429) throw firstErr;
+
       const fallbackModel = await pickAvailableModel(GEMINI_API_KEY);
       modelUsed = fallbackModel;
+
       result = await generateWithGemini({
         apiKey: GEMINI_API_KEY,
         model: modelUsed,
@@ -186,29 +252,38 @@ app.post("/api/interpret", rateLimit, async (req, res) => {
 
     return res.status(200).json({
       text: result.text,
-      modelUsed
+      modelUsed,
+      degraded: false
     });
   } catch (err) {
     const status = Number(err.status) || 500;
-    const safeMessage =
-      err?.message || "Unknown server error";
+
+    // 配額耗盡或頻率超限：回傳 200 + 備援文字，前端可正常顯示
+    if (status === 429) {
+      return res.status(200).json({
+        text: buildFallbackReading(prompt),
+        modelUsed: "fallback-local",
+        degraded: true,
+        reason: "quota_exceeded_or_rate_limited"
+      });
+    }
 
     return res.status(status).json({
       error: "AI_API_ERROR",
-      message: safeMessage,
+      message: err?.message || "Unknown server error",
       details: err?.payload?.error || null
     });
   }
 });
 
 /**
- * 健康檢查（可選）
+ * 健康檢查
  */
 app.get("/api/health", (_req, res) => {
   res.json({
     ok: true,
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    uptimeSec: Math.floor(process.uptime())
   });
 });
 

@@ -1,0 +1,9 @@
+{
+  "name": "tarot-reader-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Zero-cost Tarot Reading SPA with Gemini API via Azure SWA Functions",
+  "scripts": {
+    "start": "npx serve ."
+  }
+}

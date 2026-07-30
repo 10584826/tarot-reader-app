@@ -1,0 +1,22 @@
+{
+  "cards": [
+    {
+      "name": "The Fool",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+      "meaning_up": "新的開始、自由、冒險精神",
+      "meaning_rev": "衝動、缺乏計畫、風險評估不足"
+    },
+    {
+      "name": "The Magician",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+      "meaning_up": "行動力、資源整合、顯化能力",
+      "meaning_rev": "操控、分心、資源錯配"
+    },
+    {
+      "name": "The High Priestess",
+      "image": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
+      "meaning_up": "直覺、內在智慧、觀察",
+      "meaning_rev": "封閉、直覺受阻、資訊不明"
+    }
+  ]
+}

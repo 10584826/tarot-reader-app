@@ -1,0 +1,29 @@
+.card {
+  background: linear-gradient(145deg, rgba(15,23,42,.95), rgba(30,41,59,.95));
+  border: 1px solid rgba(251,191,36,.25);
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,.35);
+  transition: transform .35s ease;
+}
+.card:hover {
+  transform: translateY(-4px) scale(1.01);
+}
+.tarot-img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: .75rem;
+  border: 1px solid rgba(251,191,36,.3);
+}
+.reversed {
+  transform: rotate(180deg);
+}
+.shimmer {
+  animation: shimmer 1.2s infinite linear;
+}
+@keyframes shimmer {
+  0% { opacity: .7; }
+  50% { opacity: 1; }
+  100% { opacity: .7; }
+}
